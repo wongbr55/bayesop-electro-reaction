@@ -8,9 +8,52 @@ from sklearn.svm import SVR
 
 from sklearn.feature_selection import VarianceThreshold, SelectFromModel
 from sklearn.model_selection import cross_val_score, train_test_split, LeaveOneOut
+
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import OneHotEncoder
+
+import pandas as pd
 import numpy as np
 
 
+
+###########################
+# PREPROCESSING
+###########################
+
+class Preprocessing:
+    
+    """Methods for preprocessing data
+    """
+    
+    def __init__(self):
+        pass
+    
+    
+    def preprocess_data(self, data, numerical_features, categorical_features, categorical_categories, yield_label):
+        """Preprocesses a pandas dataframe
+
+        :param data: A pandas dataframe that contains all of our data
+        :type data: pd.DataFrame
+        :param numerical_features: list of numerical features
+        :type numerical_features: list
+        :param categorical_features: list of categorical features
+        :type categorical_features: list
+        :return: Returns X_data and t_data points and labels respectivly
+        :rtype: tuple
+        """
+        
+        # NOTE for now we do not standardize the numerical features
+        t_data = data.pop(yield_label).to_numpy()
+
+        categorical_transform = ("categorical_processor", OneHotEncoder(categories=categorical_categories, sparse=False, handle_unknown=False), categorical_features)
+    
+        
+        transformers = [categorical_transform]
+        processer = ColumnTransformer(transformers=transformers)
+        X_data = processer.fit_transform(data)
+        return X_data, t_data
+        
 
 ###########################
 # MODEL Training AND EVALUATION
